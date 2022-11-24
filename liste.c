@@ -19,9 +19,9 @@ int main(void)
     ajoutListe(&l1,c4);                                                             //ajout d'un element contenat c4 dans liste l1(a partir de son adresse modfication a la maniere d'une variable global)
     ajoutListe(&l1,c5);                                                             //ajout d'un element contenat c5 dans liste l1(a partir de son adresse modfication a la maniere d'une variable global)
     ajoutListe(&l1,c6);                                                             //ajout d'un element contenat c6 dans liste l1(a partir de son adresse modfication a la maniere d'une variable global)
-    printf(" -- AJOUT LISTE, taille =%d -- \n",tailleListe(l1));
-    printlist(l1);
-    effacerCoureur(&l1,c2);
+    printf(" -- AJOUT LISTE, taille =%d -- \n",tailleListe(l1));                    //affichee le nombre d'element dans la liste 
+    printlist(l1);                                                                  //affiche tous les coureurs contenue dans les elements d'une liste 
+    effacerCoureur(&l1,c2);                                                         //
     printf(" -- SUPR LISTE, taille =%d -- \n",tailleListe(l1));
     printlist(l1);
     printf(" -- INTERVERTI COUREUR 1 ET 2 DE LA LISTE -- \n");
@@ -48,7 +48,7 @@ struct element * initElement(void)
 
 liste initListe(void)
 {
-    liste l;
+    liste l;printlist
     l.debut=initElement();
     l.fin=initElement();
     l.courant=initElement();
@@ -64,16 +64,16 @@ void ajoutListe(liste * listeActuel,coureur * leCoureur)                        
     listeActuel->courant=elementActuel;                                                   //le poiteur courant contenue dans la liste pointe sur le nouvelle element
 }
 
-void printlist(liste l)
+void printlist(liste l)                                                                   //avec l la liste a affichée
 {
-    struct element * eCourant = l.courant;
-    struct element * eFin = l.fin;
-    while(eCourant->suiv != eFin->suiv)
+    struct element * eCourant = l.courant;                                                //decleration d'un poiteur eCourant egale au poiteur courant (variable temporaire)
+
+    while(eCourant->suiv != l.fin)                                                        //Tant que eCourant n'est pas égale a l'adresse du derniere element faire :
     {
-        afficherCoureur(eCourant->coureurActuel);
-        eCourant=eCourant->suiv;
+        afficherCoureur(eCourant->coureurActuel);                                         //affichee le coureur dans l'element d'adresse eCourant
+        eCourant=eCourant->suiv;                                                          //eCourant devient l'adresse de l'element suivant
     }
-    printf("NULL \n");
+    printf("NULL \n");                                                                    //affiche la valeur du dernier element 
 }
 
 void allerDebut(liste * l)
