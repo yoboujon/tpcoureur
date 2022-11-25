@@ -1,13 +1,13 @@
-#include "liste.h"                                                                  //gcc -Wall liste.c coureur.c -o tp
+#include "../header/liste.h"
 
 int main(void)
 {
-    coureur * c1 = creerCoureur("Paris","Simon",15,"TRAUFORE",50000);               //creation coureur
-    coureur * c2 = creerCoureur("Bougeont","Yoann",65,"MEILLEUR",99994);            //creation coureur
-    coureur * c3 = creerCoureur("Barakai","Obama",120,"AMERICA",372);               //creation coureur
-    coureur * c4 = creerCoureur("Boujon","Yohan",56,"MAISYEUR",49999);              //creation coureur
-    coureur * c5 = creerCoureur("Runner","Tedi",1,"JUDOOOKA",120);                  //creation coureur
-    coureur * c6 = creerCoureur("Fatigue","Jean",69,"DODODODO",11554751);           //creation coureur
+    coureur * c1 = creerCoureur("Paris","Simon",15,"TRAUFORE",50000);
+    coureur * c2 = creerCoureur("Bougeont","Yoann",65,"MEILLEUR",99994);
+    coureur * c3 = creerCoureur("Barakai","Obama",120,"AMERICA",372);
+    coureur * c4 = creerCoureur("Boujon","Yohan",56,"MAISYEUR",49999);
+    coureur * c5 = creerCoureur("Runner","Tedi",1,"JUDOOOKA",120);
+    coureur * c6 = creerCoureur("Fatigue","Jean",69,"DODODODO",11554751);
     printf(" -- COUREUR -- \n");                                
     afficherCoureur(c1);                                                            //Afficher les champs de la structure coureur c1
     ajouterTemps(50,c1);                                                            //Ajoutee 50 seconde dans le champ temp de c1
@@ -197,24 +197,24 @@ void invertCoureur(liste * l,int nb)
     }
 }
 
-        void triListe(liste * l,int taille)
+    void triListe(liste * l,int taille)
+    {
+        bool tabOrdered = true;
+        for(int i=taille-1;i>1;i--)                                    //pour i allant du nombre d'element dans la liste a 2 step -1
         {
-            bool tabOrdered = true;
-            for(int i=taille-1;i>1;i--)                                    //pour i allant du nombre d'element dans la liste a 2 step -1
+            for(int j=0;j<=i-1;j++)                                    //pour j allant de 0 a i-1 step 1
             {
-                for(int j=0;j<=i-1;j++)                                    //pour j allant de 0 a i-1 step 1
+                if(getCoureur(*l,j+1)->temps < getCoureur(*l,j)->temps)//si leCourreur taille -i a un temps < au coureur taille-i+1
                 {
-                    if(getCoureur(*l,j+1)->temps < getCoureur(*l,j)->temps)//si leCourreur taille -i a un temps < au coureur taille-i+1
-                    {
-                        invertCoureur(l,j);                                //inverser les courreurs
-                        tabOrdered = false;
-                    }
-                    //printlist(*l);
+                    invertCoureur(l,j);                                //inverser les courreurs
+                    tabOrdered = false;
                 }
-                if(tabOrdered)
-                {
-                    return;
-                }
+                //printlist(*l);
+            }
+            if(tabOrdered)
+            {
+                return;
             }
         }
+    }
 

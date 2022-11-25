@@ -1,4 +1,4 @@
-#include "coureur.h"                                        //inclure le fichier "coureur.h" qui contien les libs, structure et prototypes
+#include "../header/coureur.h"                                        //inclure le fichier "coureur.h" qui contien les libs, structure et prototypes
 
  
 /**
