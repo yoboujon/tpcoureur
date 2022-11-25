@@ -22,6 +22,6 @@ void avancer(liste * l);                                        //mettre le poit
 coureur * coureurCourant(liste * l);                            //rien a foutre ici
 void effacerCoureur(liste * listeActuel,coureur * coureurSuppr);//enleve un element d'une liste a partir de l'adresse d'un courreur, sans briser le chainage
 int tailleListe(liste l);                                       //retourne le nombre d'elements chaine d'une liste
-coureur * getCoureur(liste l,int nb);                           //
-void invertCoureur(liste * l,int nb);                           //
+coureur * getCoureur(liste l,int nb);                           //retourne le courreur contenue dans l'element nb d'une liste (on considere un element 0)
+void invertCoureur(liste * l,int nb);                           //inverse l'element nb et nb+1 dans une liste (on considere un element 0)
 void triListe(liste * l,int taille);                            //trie bulle des element d'une liste a partir du temps contenue dans la structure encapsule dans l'element
