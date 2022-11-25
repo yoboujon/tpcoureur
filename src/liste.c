@@ -1,40 +1,11 @@
 #include "../header/liste.h"
+#include "../header/readfile.h"
 
 int main(void)
 {
-    coureur * c1 = creerCoureur("Paris","Simon",15,"TRAUFORE",50000);
-    coureur * c2 = creerCoureur("Bougeont","Yoann",65,"MEILLEUR",99994);
-    coureur * c3 = creerCoureur("Barakai","Obama",120,"AMERICA",372);
-    coureur * c4 = creerCoureur("Boujon","Yohan",56,"MAISYEUR",49999);
-    coureur * c5 = creerCoureur("Runner","Tedi",1,"JUDOOOKA",120);
-    coureur * c6 = creerCoureur("Fatigue","Jean",69,"DODODODO",11554751);
-    printf(" -- COUREUR -- \n");                                
-    afficherCoureur(c1);                                                            //Afficher les champs de la structure coureur c1
-    ajouterTemps(50,c1);                                                            //Ajoutee 50 seconde dans le champ temp de c1
-    afficherCoureur(c1);                                                            //Afficher les champs de la structure coureur c1
-    liste l1 = initListe();                                                         //declaration de la liste l1 et initialisation
-    ajoutListe(&l1,c1);                                                             //ajout d'un element contenat c1 dans liste l1(a partir de son adresse modfication a la maniere d'une variable global)
-    ajoutListe(&l1,c2);                                                             //ajout d'un element contenat c2 dans liste l1(a partir de son adresse modfication a la maniere d'une variable global)
-    ajoutListe(&l1,c3);                                                             //ajout d'un element contenat c3 dans liste l1(a partir de son adresse modfication a la maniere d'une variable global)
-    ajoutListe(&l1,c4);                                                             //ajout d'un element contenat c4 dans liste l1(a partir de son adresse modfication a la maniere d'une variable global)
-    ajoutListe(&l1,c5);                                                             //ajout d'un element contenat c5 dans liste l1(a partir de son adresse modfication a la maniere d'une variable global)
-    ajoutListe(&l1,c6);                                                             //ajout d'un element contenat c6 dans liste l1(a partir de son adresse modfication a la maniere d'une variable global)
-    printf(" -- AJOUT LISTE, taille =%d -- \n",tailleListe(l1));                    //affichee le nombre d'element dans la liste 
-    printlist(l1);                                                                  //affiche tous les coureurs contenue dans les elements d'une liste 
-    effacerCoureur(&l1,c2);                                                         //suprime un element(a partir de l'adresse d'un coureur) dans la liste sans briser le chainage
-    printf(" -- SUPR LISTE, taille =%d -- \n",tailleListe(l1));                     //affichee le nombre d'element dans la liste 
-    printlist(l1);                                                                  //affiche tous les coureurs contenue dans les elements d'une liste 
-    printf(" -- INTERVERTI COUREUR 1 ET 2 DE LA LISTE -- \n");                      
-    invertCoureur(&l1,1);                                                           //intervertire l'element 1 et 2 dans la liste l1 (on considere un element 0)
-    printlist(l1);                                                                  //affiche tous les coureurs contenue dans les elements d'une liste
-    printf(" -- INTERVERTI COUREUR 0 ET 1 DE LA LISTE -- \n");                      
-    invertCoureur(&l1,0);                                                           //intervertire l'element 0 et 1 dans la liste l1 (on considere un element 0)
-    printlist(l1);                                                                  //affiche tous les coureurs contenue dans les elements d'une liste
-    printf(" -- COUREUR 2 DE LA LISTE -- \n");                              
-    afficherCoureur(getCoureur(l1,2));                                              //affiche le coureur contenue dans l'element 2 de la liste (on considere un element 0)
-    printf(" -- TRI LISTE -- \n");                                                  
-    triListe(&l1,tailleListe(l1));                                                  //trie les element de la liste sans briser le chainage, trie pas rapport au temps dans la structure courreur encaspulee dans les elements
-    printlist(l1);                                                                  //affiche tous les coureurs contenue dans les elements d'une liste
+    FILE * f=fopen ("fichier_coureurs.txt","r");
+    //printf("Number of lines : %d\n",getNbLines(f));
+    getLines(f,getNbLines(f));
     return 0;
 }
 
