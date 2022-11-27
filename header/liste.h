@@ -1,6 +1,10 @@
 #ifndef HEADER_LISTE
 #define HEADER_LISTE
-#include "coureur.h"                                            //inclure le fichier "coureur.h" qui contien les libs et la structure coureur 
+#include <time.h>
+#include "coureur.h"                                            //inclure le fichier "coureur.h" qui contien les libs et la structure coureur
+#define TEMPSMAX 300
+#define TEMPSMIN 80
+#define TEMPSDOP 70
 
 struct element{                                                 //definition de la structure qui element qui sera encaspule/chaine
     coureur * coureurActuel;                                    //"contient" l'adresse d'une structure coureur
@@ -23,8 +27,11 @@ void allerFin(liste * l);                                       //mettre le poit
 void avancer(liste * l);                                        //mettre le poiteur courant sur l'element suivant de la liste dans la qu'elle qu'il pointe
 coureur * coureurCourant(liste * l);                            //rien a foutre ici
 void effacerCoureur(liste * listeActuel,coureur * coureurSuppr);//enleve un element d'une liste a partir de l'adresse d'un courreur, sans briser le chainage
+bool doesCoureurExist(liste* l,coureur * c);
+void effacerListe(liste * destination, liste * source);
 int tailleListe(liste l);                                       //retourne le nombre d'elements chaine d'une liste
 coureur * getCoureur(liste l,int nb);                           //retourne le courreur contenue dans l'element nb d'une liste (on considere un element 0)
 void invertCoureur(liste * l,int nb);                           //inverse l'element nb et nb+1 dans une liste (on considere un element 0)
 void triListe(liste * l,int taille);                            //trie bulle des element d'une liste a partir du temps contenue dans la structure encapsule dans l'element
+int test(void);
 #endif

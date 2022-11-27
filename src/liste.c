@@ -1,17 +1,42 @@
-#include "../header/liste.h"
 #include "../header/readfile.h"
+#include "../header/liste.h"
 
 int main(void)
 {
-    int size;
+    int size, stepsNb, teamsNb, listeTaille, dopageCount=0;
+    srand(NULL);
     FILE * f=fopen ("fichier_coureurs.txt","r");
     char * fileString = (char *)(malloc(getFileSize(f)*sizeof(char)));
     int fileLines = getNbLines(f);
     getStringFromFile(f,fileLines,fileString,&size);
-    int stepsNb = atoi(getLine(fileString,1));
-    int teamsNb = atoi(getLine(fileString,2));
-    printf("Nombre d'etapes : %d\t Nombre d'equipes :%d\n",stepsNb,teamsNb);
+    stepsNb = atoi(getLine(fileString,1));
+    teamsNb = atoi(getLine(fileString,2));
     liste l = string2Liste(fileString,fileLines);
+    liste dopageList = initListe();
+    listeTaille = tailleListe(l);
+
+    for(int i=0; i<stepsNb ; i++)
+    {
+        for(int j=0; j<listeTaille ; j++)
+        {
+            int temptemps = (rand()%(TEMPSMAX-TEMPSDOP+1))+TEMPSDOP;
+            coureur * coureurTemp = l.courant->coureurActuel;
+            ajouterTemps(temptemps,coureurTemp);
+            avancer(&l);
+            if(temptemps < TEMPSMIN)
+            {
+                ajoutListe(&dopageList,coureurTemp);
+                dopageCount++;
+            }
+        }
+        allerDebut(&l);
+    }
+    allerDebut(&l);
+    printf(" --- AVANT : ---\n");
+    printlist(l);
+    effacerListe(&l,&dopageList);
+    printf("\n --- APRES : ---\n");
+    triListe(&l,tailleListe(l));
     printlist(l);
     return 0;
 }
@@ -147,6 +172,10 @@ coureur * coureurCourant(liste * l)
  */
 void effacerCoureur(liste * listeActuel,coureur * coureurSuppr) 
 {
+    if(!doesCoureurExist(listeActuel,coureurSuppr))
+    {
+        return;
+    }
     struct element *eParcours =listeActuel->debut;       
     struct element * ePrevious;                          
     if(eParcours->coureurActuel == coureurSuppr)         
@@ -163,6 +192,30 @@ void effacerCoureur(liste * listeActuel,coureur * coureurSuppr)
         }
         ePrevious->suiv=eParcours->suiv;                 
         free(eParcours);                                
+    }
+}
+
+bool doesCoureurExist(liste* l,coureur * c)
+{
+    struct element * eDebut = l->debut;                                                  
+    while(eDebut->suiv != l->fin->suiv)                                                  
+    {
+        if(eDebut->coureurActuel == c)
+        {
+            return true;
+        }                                    
+        eDebut=eDebut->suiv;                                                         
+    }
+    return false; 
+}
+
+void effacerListe(liste * destination, liste * source)
+{
+    struct element * eCourant = source->debut;                                                  
+    while(eCourant->suiv != source->fin->suiv)
+    {
+        effacerCoureur(destination,eCourant->coureurActuel);                                   
+        eCourant=eCourant->suiv;
     }
 }
 
@@ -189,7 +242,8 @@ int tailleListe(liste l)
         returnValue++;                              
         elementActuel=elementActuel->suiv;          
     };
-    return returnValue;                            
+    return returnValue;
+    allerDebut(&l);                  
 }
 
 /**
@@ -279,11 +333,55 @@ void triListe(liste * l,int taille)
                 invertCoureur(l,j);                                
                 tabOrdered = false;
             }
-            printlist(*l);
+            //printlist(*l);
         }
         if(tabOrdered)
         {
             return;
         }
     }
+}
+
+int test(void)
+{
+        coureur * c1 = creerCoureur("Paris","Simon",15,"TRAUFORE",50000);
+    coureur * c2 = creerCoureur("Bougeont","Yoann",65,"MEILLEUR",99994);
+    coureur * c3 = creerCoureur("Barakai","Obama",120,"AMERICA",372);
+    coureur * c4 = creerCoureur("Boujon","Yohan",56,"MAISYEUR",49999);
+    coureur * c5 = creerCoureur("Runner","Tedi",1,"JUDOOOKA",120);
+    coureur * c6 = creerCoureur("Fatigue","Jean",69,"DODODODO",11554751);
+    coureur * c7 = creerCoureur("MISSINGO","No way",42,"dontexist",2);
+    printf(" -- COUREUR -- \n");                                
+    afficherCoureur(c1);
+    ajouterTemps(50,c1);
+    afficherCoureur(c1);
+    liste l1 = initListe();
+    ajoutListe(&l1,c1);
+    ajoutListe(&l1,c2);
+    ajoutListe(&l1,c3);
+    ajoutListe(&l1,c4);                                                             
+    ajoutListe(&l1,c5);                                                             
+    ajoutListe(&l1,c6);                                                             
+    printf(" -- AJOUT LISTE, taille =%d -- \n",tailleListe(l1));
+    printlist(l1);
+    effacerCoureur(&l1,c2);
+    printf(" -- SUPR LISTE, taille =%d -- \n",tailleListe(l1));
+    printlist(l1);
+    printf(" -- INTERVERTI COUREUR 1 ET 2 DE LA LISTE -- \n");
+    invertCoureur(&l1,1);
+    printlist(l1);
+    printf(" -- INTERVERTI COUREUR 0 ET 1 DE LA LISTE -- \n");
+    invertCoureur(&l1,0);
+    printlist(l1);
+    printf(" -- COUREUR 2 DE LA LISTE -- \n");
+    afficherCoureur(getCoureur(l1,2));
+    printf(" -- TRI LISTE -- \n");
+    triListe(&l1,tailleListe(l1));
+    printlist(l1);
+    printf(" -- SUPPRIME UN COUREUR N'EXISTANT PAS -- \n");
+    effacerCoureur(&l1,c3);
+    effacerCoureur(&l1,c4);
+    printf("Does c3 exists : %d\tand c4 ? : %d\n",doesCoureurExist(&l1,c3),doesCoureurExist(&l1,c4));
+    printlist(l1);
+    return 0;
 }

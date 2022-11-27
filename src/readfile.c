@@ -1,6 +1,12 @@
 #include "../header/readfile.h"
 #define MAXLINE 50
 
+/**
+ * @brief Récupère le nombre de ligne d'un fichier
+ * 
+ * @param readFile le fichier en question 
+ * @return int nombre de ligne
+ */
 int getNbLines(FILE * readFile)
 {
     int c,count=0;
@@ -14,6 +20,15 @@ int getNbLines(FILE * readFile)
     return count+1;
 }
 
+/**
+ * @brief Converti les caractères d'un fichier dans un string pour pouvoir
+ * le manipuler plus simplement
+ * 
+ * @param readFile le fichier à lire
+ * @param nbLines son nombre de ligne
+ * @param returnString une chaîne de caractère vide à modifier
+ * @param size renvoie la taille de la chaîne de caractère
+ */
 void getStringFromFile(FILE * readFile,int nbLines,char * returnString,int * size)
 {
     int i;
@@ -29,6 +44,13 @@ void getStringFromFile(FILE * readFile,int nbLines,char * returnString,int * siz
     }
 }
 
+/**
+ * @brief récupère la taille du fichier, est assez grossier et ne sert qu'à
+ * initialiser les tableaux pour ne pas avoir une taille à prédéfinir.
+ * 
+ * @param readFile fichier en question
+ * @return int taille du fichier
+ */
 int getFileSize(FILE * readFile)
 {
     fseek(readFile,0,2);
@@ -65,10 +87,12 @@ char * getLine(char * string,int line)
 }
 
 /**
- * @brief 
+ * @brief Renvoi une liste à partir d'une chaîne de caractère contenant
+ * les équipes ainsi que les coureurs avec leur nom, leur prénom et numéro de dossard
  * 
- * @param string 
- * @param nbLines 
+ * @param string chaîne de caractère
+ * @param nbLines nombre de ligne max de la chaîne de caractère
+ * @return liste des coureurs
  */
 liste string2Liste(char * string,int nbLines)
 {
