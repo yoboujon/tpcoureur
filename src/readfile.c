@@ -64,24 +64,94 @@ char * getLine(char * string,int line)
     return returnString;
 }
 
-void string2Coureur(char * string,int nbLines)
+/**
+ * @brief 
+ * 
+ * @param string 
+ * @param nbLines 
+ */
+liste string2Liste(char * string,int nbLines)
 {
     int j=0;
+    char * team = (char *)(malloc(MAXLINE*sizeof(char)));
+    liste l = initListe();
     for(int i=3;i<=nbLines;i++)
     {
+        char * nom = (char *)(malloc(MAXLINE*sizeof(char)));
+        char * prenom = (char *)(malloc(MAXLINE*sizeof(char)));
+        int dossard=0;
         switch(j)
         {
             case 0:
-                printf("Nom de l'equipe : %s\n",getLine(string,i));
+                strcpy(team,getLine(string,i));
                 break;
             default:
-                printf("Coureur : %s\n",getLine(string,i));
+                string2Coureur(getLine(string,i),nom,prenom,&dossard);
+                coureur * coureurTemp = creerCoureur(nom,prenom,dossard,team,0);
+                ajoutListe(&l,coureurTemp);
         }
         j++;
         if(j>5)
         {
             j=0;
-            printf("\n");
         }
+        free(nom);
+        free(prenom);
     }
+    return l;
+}
+
+/**
+ * @brief A partir d'une ligne récupère les informations sur le coureur,
+ * Notamment son numéro de dossard, son nom et son prénom
+ * 
+ * @param string    char * ligne textuel
+ * @param nom       char * renvoi le nom du coureur, doit être vide
+ * @param prenom    char * renvoi le nom du coureur, doit être vide
+ * @param dossard   int * renvoi le numéro du dossard
+ */
+void string2Coureur(char * string,char * nom, char * prenom, int * dossard)
+{
+    int i=0,j=0,k=0;
+    char * temp = (char *)(malloc(MAXLINE*sizeof(char)));
+    while(string[j]!='\0'){
+        k=0;
+        while(string[j] != ',' && string[j]!='\0'){
+            temp[k] = string[j];
+            j++;
+            k++;
+        }
+        temp[k]='\0';
+        j++;
+        switch(i)
+        {
+            case 0:
+                *dossard = atoi(temp);
+                break;
+            case 1:
+                strcpy(nom,temp);
+                break;
+            case 2:
+                strcpy(prenom,temp);
+                break;
+            default:
+        }
+        i++;
+    }
+    free(temp);
+}
+
+/**
+ * @brief Debug uniquement, permet d'observer les valeurs de chaque caractère.
+ * la taille n'est pas demandée pour observer au delà de l'espace mémoire donné
+ * 
+ * @param string un tableau de caractère
+ */
+void printHexString(char * string)
+{
+    for(int i=0;i<MAXLINE;i++)
+    {
+        printf("0x%x, ",string[i]);
+    }
+    printf("\n\n");
 }

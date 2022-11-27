@@ -11,7 +11,8 @@ int main(void)
     int stepsNb = atoi(getLine(fileString,1));
     int teamsNb = atoi(getLine(fileString,2));
     printf("Nombre d'etapes : %d\t Nombre d'equipes :%d\n",stepsNb,teamsNb);
-    string2Coureur(fileString,fileLines);
+    liste l = string2Liste(fileString,fileLines);
+    printlist(l);
     return 0;
 }
 
@@ -43,7 +44,6 @@ liste initListe(void)
     return l;
 }
 
-
 /**
  * @brief ajout d'un element contenant un coureur dans liste 
  * fonctionnement :
@@ -63,7 +63,6 @@ void ajoutListe(liste * listeActuel,coureur * leCoureur)
     listeActuel->debut=elementActuel;                                                     
     listeActuel->courant=elementActuel;                                                   
 }
-
 
 /**
  * @brief affiche tous les coureurs contenue dans les elements d'une liste
@@ -125,7 +124,6 @@ coureur * coureurCourant(liste * l)
 {
     return l->courant->coureurActuel;
 }
-
 
 /**
  * @brief suprime un element(a partir de l'adresse d'un coureur) dans la liste sans briser le chainage

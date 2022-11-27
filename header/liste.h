@@ -1,3 +1,5 @@
+#ifndef HEADER_LISTE
+#define HEADER_LISTE
 #include "coureur.h"                                            //inclure le fichier "coureur.h" qui contien les libs et la structure coureur 
 
 struct element{                                                 //definition de la structure qui element qui sera encaspule/chaine
@@ -25,3 +27,4 @@ int tailleListe(liste l);                                       //retourne le no
 coureur * getCoureur(liste l,int nb);                           //retourne le courreur contenue dans l'element nb d'une liste (on considere un element 0)
 void invertCoureur(liste * l,int nb);                           //inverse l'element nb et nb+1 dans une liste (on considere un element 0)
 void triListe(liste * l,int taille);                            //trie bulle des element d'une liste a partir du temps contenue dans la structure encapsule dans l'element
+#endif

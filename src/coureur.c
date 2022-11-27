@@ -1,6 +1,5 @@
 #include "../header/coureur.h"                                        //inclure le fichier "coureur.h" qui contien les libs, structure et prototypes
 
- 
 /**
  * @brief Creation d'un coureur en memoire avec recupération de son adrresse avec le parametrage de c'est different champs
     fonctionnement :
@@ -31,8 +30,6 @@ coureur * creerCoureur(char nom[],char prenom[],int dossard, char equipe[],int t
     return leCoureur;                                       
 }                                                           
 
-
-
 /**
  * @brief Modifier le temps d'un coureur a partir de son adresse et d'une valeur de cumule
  * 
@@ -43,8 +40,6 @@ void ajouterTemps(int leTemps,coureur * leCoureur)
 {                                                           
     leCoureur->temps+=leTemps;                              
 }                                                           
-
-
 
 /**
  * @brief Afficher le temps d'un coureur stocker en seconde sous forme d'heures, de minutes et de secondes ( a partir de l'adresse de sa structure):
