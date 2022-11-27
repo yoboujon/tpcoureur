@@ -5,13 +5,8 @@ int main(void)
 {
     int size, stepsNb, teamsNb, listeTaille, dopageCount=0;
     srand(time(NULL));
-    FILE * f=fopen ("fichier_coureurs.txt","r");
-    char * fileString = (char *)(malloc(getFileSize(f)*sizeof(char)));
-    int fileLines = getNbLines(f);
-    getStringFromFile(f,fileLines,fileString,&size);
-    stepsNb = atoi(getLine(fileString,1));
-    teamsNb = atoi(getLine(fileString,2));
-    liste l = string2Liste(fileString,fileLines);
+    int fileLines = getNbLines();
+    liste l = getStringFromFile(fileLines,&size,&stepsNb,&teamsNb);
     liste dopageList = initListe();
     listeTaille = tailleListe(l);
 
@@ -27,7 +22,6 @@ int main(void)
             if(temptemps < TEMPSMIN)
             {
                 ajoutListe(&dopageList,coureurTemp);
-                dopageCount++;
             }
         }
         allerDebut(&l);
@@ -35,10 +29,11 @@ int main(void)
     allerDebut(&l);
     printf(" --- AVANT : ---\n");
     printlist(l);
-    effacerListe(&l,&dopageList);
+    dopageCount=effacerListe(&l,&dopageList);
     printf("\n --- APRES : ---\n");
     triListe(&l,tailleListe(l));
     printlist(l);
+    printf("\n --- NOMBRE DE PERSONNES DOPEES : %d ---\n",dopageCount);
     return 0;
 }
 
@@ -171,11 +166,11 @@ coureur * coureurCourant(liste * l)
  * @param listeActuel Liste ou l'on suppr un element
  * @param coureurSuppr le coureur qui doit etre dans l'element pour le supprimer 
  */
-void effacerCoureur(liste * listeActuel,coureur * coureurSuppr) 
+bool effacerCoureur(liste * listeActuel,coureur * coureurSuppr) 
 {
     if(!doesCoureurExist(listeActuel,coureurSuppr))
     {
-        return;
+        return false;
     }
     struct element *eParcours =listeActuel->debut;       
     struct element * ePrevious;                          
@@ -194,6 +189,7 @@ void effacerCoureur(liste * listeActuel,coureur * coureurSuppr)
         ePrevious->suiv=eParcours->suiv;                 
         free(eParcours);                                
     }
+    return true;
 }
 
 bool doesCoureurExist(liste* l,coureur * c)
@@ -210,14 +206,19 @@ bool doesCoureurExist(liste* l,coureur * c)
     return false; 
 }
 
-void effacerListe(liste * destination, liste * source)
+int effacerListe(liste * destination, liste * source)
 {
+    int returnValue=0;
     struct element * eCourant = source->debut;                                                  
     while(eCourant->suiv != source->fin->suiv)
     {
-        effacerCoureur(destination,eCourant->coureurActuel);                                   
+        if(effacerCoureur(destination,eCourant->coureurActuel))
+        {
+            returnValue++; 
+        }                            
         eCourant=eCourant->suiv;
     }
+    return returnValue;
 }
 
 /**

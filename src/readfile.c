@@ -7,9 +7,15 @@
  * @param readFile le fichier en question 
  * @return int nombre de ligne
  */
-int getNbLines(FILE * readFile)
+int getNbLines(void)
 {
     int c,count=0;
+    FILE * readFile=fopen ("fichier_coureurs.txt","r");
+    if (readFile == NULL)
+    {
+        printf("Le fichier ne peut pas être ouvert!\n");
+        return -1;
+    }
     do{
         c=getc(readFile);
         if(c == 0xa)
@@ -17,31 +23,72 @@ int getNbLines(FILE * readFile)
             count++;
         }
     }while(c!=0xffffffff);
+    fclose(readFile);
     return count+1;
 }
 
 /**
- * @brief Converti les caractères d'un fichier dans un string pour pouvoir
- * le manipuler plus simplement
+ * @brief Converti les caractères d'un fichier dans la liste de coureur.
  * 
- * @param readFile le fichier à lire
- * @param nbLines son nombre de ligne
- * @param returnString une chaîne de caractère vide à modifier
+ * @param nbLines nombre de ligne du fichier qui va être lu
  * @param size renvoie la taille de la chaîne de caractère
+ * @param stepsNb int * renvoi le nombre d'étapes
+ * @param teamsNb int * renvoi le nombre d'équipes
+ * @return liste de coureurs
  */
-void getStringFromFile(FILE * readFile,int nbLines,char * returnString,int * size)
+liste getStringFromFile(int nbLines,int * size, int * stepsNb,int * teamsNb)
 {
-    int i;
-    char temp[MAXLINE];
+    liste l = initListe();
+    FILE * readFile=fopen("fichier_coureurs.txt","r");
+    if (readFile == NULL)
+    {
+        printf("Le fichier ne peut pas être ouvert!\n");
+        return l;
+    }
+    int i,j=0;
+    char * team = (char *)(malloc(MAXLINE*sizeof(char)));
+    char *temp =(char *)(malloc(MAXLINE*(sizeof(char))));
     *size=0;
-    strcpy(returnString,"");
     fseek(readFile,0,0);
     for(i=0;i<nbLines;i++)
     {
-        fgets(temp,100,readFile);
+        char * nom = (char *)(malloc(MAXLINE*sizeof(char)));
+        char * prenom = (char *)(malloc(MAXLINE*sizeof(char)));
+        int dossard=0;
+        fgets(temp,MAXLINE,readFile);
+        deleteLineFeed(temp);
+        switch(i)
+        {
+            case 0:
+                *stepsNb = atoi(temp);
+                break;
+            case 1:
+                *teamsNb = atoi(temp);
+                break;
+            default :
+                switch(j)
+                {
+                    case 0:
+                        strcpy(team,temp);
+                        break;
+                    default:
+                        //printHexString(temp);
+                        string2Coureur(temp,nom,prenom,&dossard);
+                        coureur * coureurTemp = creerCoureur(nom,prenom,dossard,team,0);
+                        ajoutListe(&l,coureurTemp);
+                }
+                j++;
+                if(j>5)
+                {
+                    j=0;
+                }
+                free(nom);
+                free(prenom);
+        }
         *size+=strlen(temp);
-        strcat(returnString,temp);
     }
+    fclose(readFile);
+    return l;
 }
 
 /**
@@ -60,7 +107,8 @@ int getFileSize(FILE * readFile)
 }
 
 /**
- * @brief Debug uniquement : récupère une ligne, non optimisé donc inutilisable
+ * @brief /!\/!\/!\ Debug uniquement /!\/!\/!\ : 
+ * récupère une ligne, non optimisé donc inutilisable
  * 
  * @param string la chaîne de caractère à analyser
  * @param line int la ligne à récupérer
@@ -87,7 +135,8 @@ char * getLine(char * string,int line)
 }
 
 /**
- * @brief Renvoi une liste à partir d'une chaîne de caractère contenant
+ * @brief /!\/!\/!\ INUTILISE CAR OBSELETE /!\/!\/!\ :
+ * Renvoi une liste à partir d'une chaîne de caractère contenant
  * les équipes ainsi que les coureurs avec leur nom, leur prénom et numéro de dossard
  * 
  * @param string chaîne de caractère
@@ -138,7 +187,7 @@ void string2Coureur(char * string,char * nom, char * prenom, int * dossard)
 {
     int i=0,j=0,k=0;
     char * temp = (char *)(malloc(MAXLINE*sizeof(char)));
-    while(string[j]!='\0'){
+    while(string[j]!='\0' && string[j]!='\n'){
         k=0;
         while(string[j] != ',' && string[j]!='\0'){
             temp[k] = string[j];
@@ -166,7 +215,27 @@ void string2Coureur(char * string,char * nom, char * prenom, int * dossard)
 }
 
 /**
- * @brief Debug uniquement, permet d'observer les valeurs de chaque caractère.
+ * @brief Supprime les retours à la ligne dans les chaînes de caractère.
+ * Attention ! les remplace par le caractère signifiant la fin de la chaîne.
+ * 
+ * @param string chaîne de caractère
+ */
+void deleteLineFeed(char * string)
+{
+    int i=0;
+    while(string[i]!='\0')
+    {
+        if(string[i]=='\n')
+        {
+            string[i]='\0';
+        }
+        i++;
+    }
+}
+
+/**
+ * @brief /!\/!\/!\ Debug uniquement /!\/!\/!\ :
+ * Permet d'observer les valeurs de chaque caractère.
  * la taille n'est pas demandée pour observer au delà de l'espace mémoire donné
  * 
  * @param string un tableau de caractère

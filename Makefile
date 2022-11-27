@@ -4,7 +4,7 @@ SRC=src/
 EXEC=main
 CLEAN=clean
 
-all: clean $(EXEC) exec
+all: $(EXEC) exec
 
 main: liste.o coureur.o readfile.o
 	$(CC) $(CFLAGS) -o $@ $^
