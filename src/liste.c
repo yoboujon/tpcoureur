@@ -4,7 +4,7 @@
 int main(void)
 {
     int size, stepsNb, teamsNb, listeTaille, dopageCount=0;
-    srand(NULL);
+    srand(time(NULL));
     FILE * f=fopen ("fichier_coureurs.txt","r");
     char * fileString = (char *)(malloc(getFileSize(f)*sizeof(char)));
     int fileLines = getNbLines(f);
@@ -15,6 +15,7 @@ int main(void)
     liste dopageList = initListe();
     listeTaille = tailleListe(l);
 
+    printf("Nombre d'etapes : %d\t Nombre d'equipes :%d\n",stepsNb,teamsNb);
     for(int i=0; i<stepsNb ; i++)
     {
         for(int j=0; j<listeTaille ; j++)
@@ -379,6 +380,7 @@ int test(void)
     triListe(&l1,tailleListe(l1));
     printlist(l1);
     printf(" -- SUPPRIME UN COUREUR N'EXISTANT PAS -- \n");
+    effacerCoureur(&l1,c7);
     effacerCoureur(&l1,c3);
     effacerCoureur(&l1,c4);
     printf("Does c3 exists : %d\tand c4 ? : %d\n",doesCoureurExist(&l1,c3),doesCoureurExist(&l1,c4));
