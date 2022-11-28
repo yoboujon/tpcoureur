@@ -1,5 +1,4 @@
 #include "../header/readfile.h"
-#define MAXLINE 50
 
 /**
  * @brief Récupère le nombre de ligne d'un fichier
@@ -36,7 +35,7 @@ int getNbLines(void)
  * @param teamsNb int * renvoi le nombre d'équipes
  * @return liste de coureurs
  */
-liste getStringFromFile(int nbLines,int * size, int * stepsNb,int * teamsNb)
+liste getListFromFile(int nbLines,int * size, int * stepsNb,int * teamsNb)
 {
     liste l = initListe();
     FILE * readFile=fopen("fichier_coureurs.txt","r");

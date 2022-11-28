@@ -6,7 +6,7 @@ int main(void)
     int size, stepsNb, teamsNb, listeTaille, dopageCount=0;
     srand(time(NULL));
     int fileLines = getNbLines();
-    liste l = getStringFromFile(fileLines,&size,&stepsNb,&teamsNb);
+    liste l = getListFromFile(fileLines,&size,&stepsNb,&teamsNb);
     liste dopageList = initListe();
     listeTaille = tailleListe(l);
 
@@ -27,13 +27,13 @@ int main(void)
         allerDebut(&l);
     }
     allerDebut(&l);
-    printf(" --- AVANT : ---\n");
-    printlist(l);
+    char ** tabTeam = initMatrix(teamsNb,MAXLINE);
+    readTeams(tabTeam,teamsNb,MAXLINE,l);
     dopageCount=effacerListe(&l,&dopageList);
-    printf("\n --- APRES : ---\n");
+    //printf("\n --- CLASSEMENT GENERAL : ---\n");
     triListe(&l,tailleListe(l));
-    printlist(l);
-    printf("\n --- NOMBRE DE PERSONNES DOPEES : %d ---\n",dopageCount);
+    //printlist(l);
+    //printf("\n --- NOMBRE DE PERSONNES DOPEES : %d ---\n",dopageCount);
     return 0;
 }
 
@@ -344,9 +344,55 @@ void triListe(liste * l,int taille)
     }
 }
 
+/**
+ * @brief Initialise un tableau de chaîne de caractères
+ * 
+ * @param sizeCol taille des colonnes
+ * @param sizeLine taille de chaque ligne
+ * @return int** Une matrice de caractère
+ */
+char ** initMatrix(int sizeCol,int sizeLine)
+{
+    char ** matrix;
+    matrix = (char **)(malloc(sizeLine*sizeof(char *)));
+    for(int i=0;i<sizeLine;i++)
+    {
+        *(matrix+i) = (char *)(malloc(sizeCol*sizeof(char)));
+    }
+    return matrix;
+}
+
+bool isStringInMatrix(char ** matrix, char * string, int size)
+{
+    for(int i=0;i<size;i++)
+    {
+        if(strcmp(matrix[i],string) == 0)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+void readTeams(char ** matrix, int sizeCol, int sizeLine, liste l)
+{
+    int i=0;
+    struct element * elementCourant = l.courant;
+    struct element * elementFin = l.fin;
+    while(elementCourant->suiv != elementFin->suiv)
+    {
+        if(!isStringInMatrix(matrix,elementCourant->coureurActuel->equipe,sizeCol))
+        {
+            matrix[i]=elementCourant->coureurActuel->equipe;
+            i++;
+        }
+        elementCourant=elementCourant->suiv;
+    }
+}
+
 int test(void)
 {
-        coureur * c1 = creerCoureur("Paris","Simon",15,"TRAUFORE",50000);
+    coureur * c1 = creerCoureur("Paris","Simon",15,"TRAUFORE",50000);
     coureur * c2 = creerCoureur("Bougeont","Yoann",65,"MEILLEUR",99994);
     coureur * c3 = creerCoureur("Barakai","Obama",120,"AMERICA",372);
     coureur * c4 = creerCoureur("Boujon","Yohan",56,"MAISYEUR",49999);
