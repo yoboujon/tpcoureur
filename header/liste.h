@@ -4,7 +4,7 @@
 #include "coureur.h"                                            //inclure le fichier "coureur.h" qui contien les libs et la structure coureur
 #define TEMPSMAX 300
 #define TEMPSMIN 80
-#define TEMPSDOP 79
+#define TEMPSDOP 77
 
 struct element{                                                 //definition de la structure qui element qui sera encaspule/chaine
     coureur * coureurActuel;                                    //"contient" l'adresse d'une structure coureur
@@ -36,5 +36,9 @@ void triListe(liste * l,int taille);                            //trie bulle des
 char ** initMatrix(int sizeCol,int sizeLine);
 bool isStringInMatrix(char ** matrix, char * string, int size);
 void readTeams(char ** matrix, int sizeCol, int sizeLine, liste l);
+int * teamsCount(char ** teamNames, int sizeCol, liste list);
+void removeTeam(char ** teamNames, int sizeCol, liste * list, int * coureursInTeams, int lessThanCoureurCount);
+struct element * getElementCourant(liste l);
+void printTeamsDetails(char ** teamsNames, int * coureurInTeams, int teamsNB);
 int test(void);
 #endif

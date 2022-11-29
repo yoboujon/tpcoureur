@@ -3,7 +3,7 @@
 
 int main(void)
 {
-    int size, stepsNb, teamsNb, listeTaille, dopageCount=0;
+    int size, stepsNb, teamsNb, listeTaille, dopageCount;
     srand(time(NULL));
     int fileLines = getNbLines();
     liste l = getListFromFile(fileLines,&size,&stepsNb,&teamsNb);
@@ -30,10 +30,15 @@ int main(void)
     char ** tabTeam = initMatrix(teamsNb,MAXLINE);
     readTeams(tabTeam,teamsNb,MAXLINE,l);
     dopageCount=effacerListe(&l,&dopageList);
-    //printf("\n --- CLASSEMENT GENERAL : ---\n");
+    int * teamCount = teamsCount(tabTeam,teamsNb,l);
+    printf("\n --- TEAMS AND TEAMS COUNT : --- \n");
+    printTeamsDetails(tabTeam,teamCount,teamsNb);
+    printf("\n --- COUREURS SUPPRIMEES --- : \n");
+    removeTeam(tabTeam,teamsNb,&l,teamCount,3);
+    printf("\n --- CLASSEMENT GENERAL : ---\n");
     triListe(&l,tailleListe(l));
-    //printlist(l);
-    //printf("\n --- NOMBRE DE PERSONNES DOPEES : %d ---\n",dopageCount);
+    printlist(l);
+    printf("\n --- NOMBRE DE PERSONNES DOPEES : %d ---\n",dopageCount);
     return 0;
 }
 
@@ -387,6 +392,58 @@ void readTeams(char ** matrix, int sizeCol, int sizeLine, liste l)
             i++;
         }
         elementCourant=elementCourant->suiv;
+    }
+}
+
+int * teamsCount(char ** teamNames, int sizeCol, liste list)
+{
+    int * teamCount = (int *)(malloc(sizeCol*sizeof(int)));
+    memset(teamCount, 0, sizeCol*sizeof(int));
+    struct element * elementCourant = list.courant;
+    struct element * elementFin = list.fin;
+    while(elementCourant->suiv != elementFin->suiv)
+    {
+        for(int i=0;i<sizeCol;i++)
+        {
+            if(strcmp(teamNames[i],elementCourant->coureurActuel->equipe) == 0)
+            {
+                teamCount[i]++;
+            }
+        }
+        elementCourant=elementCourant->suiv;
+    }
+    return teamCount;
+}
+
+void removeTeam(char ** teamNames, int sizeCol, liste * list, int * coureursInTeams, int lessThanCoureurCount)
+{
+    struct element * elementCourant = list->courant;
+    struct element * elementFin = list->fin;
+    while(elementCourant->suiv != elementFin->suiv)
+    {
+        for(int i=0;i<sizeCol;i++)
+        {
+            if((strcmp(teamNames[i],elementCourant->coureurActuel->equipe)) == 0 && (coureursInTeams[i]<=lessThanCoureurCount))
+            {
+                afficherCoureur(elementCourant->coureurActuel);
+                effacerCoureur(list,elementCourant->coureurActuel);
+                elementCourant=getElementCourant(*list);
+            }
+        }
+        elementCourant=elementCourant->suiv;
+    }
+}
+
+struct element * getElementCourant(liste l)
+{
+    return l.courant;
+}
+
+void printTeamsDetails(char ** teamsNames, int * coureurInTeams, int teamsNB)
+{
+    for(int i=0;i<teamsNB;i++)
+    {
+        printf("Team [%d] : %s\tCoureurs : %d\n",i,teamsNames[i],coureurInTeams[i]);
     }
 }
 
