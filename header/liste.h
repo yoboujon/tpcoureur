@@ -2,9 +2,9 @@
 #define HEADER_LISTE
 #include <time.h>
 #include "coureur.h"                                            //inclure le fichier "coureur.h" qui contien les libs et la structure coureur
-#define TEMPSMAX 300
+#define TEMPSMAX 400
 #define TEMPSMIN 80
-#define TEMPSDOP 77
+#define TEMPSDOP 70
 
 struct element{                                                 //definition de la structure qui element qui sera encaspule/chaine
     coureur * coureurActuel;                                    //"contient" l'adresse d'une structure coureur
@@ -40,5 +40,9 @@ int * teamsCount(char ** teamNames, int sizeCol, liste list);
 void removeTeam(char ** teamNames, int sizeCol, liste * list, int * coureursInTeams, int lessThanCoureurCount);
 struct element * getElementCourant(liste l);
 void printTeamsDetails(char ** teamsNames, int * coureurInTeams, int teamsNB);
+void printTeamsDetailsFor(int num, char ** teamsNames, int * coureurInTeams, int teamsNB);
+int * keepOnlyCoureur(int maxCoureur, liste * list, char ** teamNames, int sizeCol);
+void triTemps(int * temps, int taille,char ** teams);
+void printTeamsTimes(int * temps, char ** teams, int taille, int ignore);
 int test(void);
 #endif

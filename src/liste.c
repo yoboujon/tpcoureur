@@ -28,22 +28,24 @@ int main(void)
         allerDebut(&l);
     }
     allerDebut(&l);
+    printf("\n --- LISTE DES PARTICIPANTS --- \n");
+    printlist(l);
     char ** tabTeam = initMatrix(teamsNb,MAXLINE);
     readTeams(tabTeam,teamsNb,MAXLINE,l);
     dopageCount=effacerListe(&l,&dopageList);
     int * teamCount = teamsCount(tabTeam,teamsNb,l);
-    printf("\n --- TEAMS AND TEAMS COUNT : --- \n");
-    printTeamsDetails(tabTeam,teamCount,teamsNb);
-    printlist(l);
-    printf("\n --- TROIS COUREURS RESTANTS --- : \n");
-    keepOnlyCoureur(3,&l,tabTeam,teamsNb);
-    printlist(l);
-    printf("\n --- COUREURS SUPPRIMEES --- : \n");
-    removeTeam(tabTeam,teamsNb,&l,teamCount,MAXTEAMATES);
     printf("\n --- CLASSEMENT GENERAL : ---\n");
     triListe(&l,tailleListe(l));
     printlist(l);
     printf("\n --- NOMBRE DE PERSONNES DOPEES : %d ---\n",dopageCount);
+    printf("\n --- ELIMINATION DES EQUIPES --- : \n");
+    removeTeam(tabTeam,teamsNb,&l,teamCount,MAXTEAMATES);
+    teamCount = teamsCount(tabTeam,teamsNb,l);
+    printTeamsDetailsFor(0,tabTeam,teamCount,teamsNb);
+    printf("\n --- CLASSEMENT FINAL : --- : \n");
+    int * timeTeam = keepOnlyCoureur(MAXTEAMATES,&l,tabTeam,teamsNb);
+    triTemps(timeTeam,teamsNb,tabTeam);
+    printTeamsTimes(timeTeam,tabTeam,teamsNb,0);
     return 0;
 }
 
@@ -206,6 +208,13 @@ bool effacerCoureur(liste * listeActuel,coureur * coureurSuppr, bool returnSuiv)
     return true;
 }
 
+/**
+ * @brief Cherche si un coureur existe dans une liste
+ * 
+ * @param l la liste en question
+ * @param c le coureur cherché 
+ * @return true / false
+ */
 bool doesCoureurExist(liste* l,coureur * c)
 {
     struct element * eDebut = l->debut;                                                  
@@ -220,6 +229,13 @@ bool doesCoureurExist(liste* l,coureur * c)
     return false; 
 }
 
+/**
+ * @brief A partir d'une liste source supprime tous les éléments en commun
+ * 
+ * @param destination liste à modifier
+ * @param source liste des éléments à supprimer
+ * @return int nombre d'éléments supprimés
+ */
 int effacerListe(liste * destination, liste * source)
 {
     int returnValue=0;
@@ -376,6 +392,15 @@ char ** initMatrix(int sizeCol,int sizeLine)
     return matrix;
 }
 
+/**
+ * @brief Detecte si une chaîne de caractères est présente dans un
+ * tabealu de chaîne de caractères
+ * 
+ * @param matrix tableau de chaîne de caractères
+ * @param string chaîne de caractère
+ * @param size nombre de lignes
+ * @return true / false
+ */
 bool isStringInMatrix(char ** matrix, char * string, int size)
 {
     for(int i=0;i<size;i++)
@@ -388,6 +413,14 @@ bool isStringInMatrix(char ** matrix, char * string, int size)
     return false;
 }
 
+/**
+ * @brief Donne le nom de chaque équipe dans un tableau de chaîne de caractères
+ * 
+ * @param matrix tableau de chaîne de caractère
+ * @param sizeCol taille des colonns
+ * @param sizeLine taille des lignes
+ * @param l la liste composant les noms des équipes
+ */
 void readTeams(char ** matrix, int sizeCol, int sizeLine, liste l)
 {
     int i=0;
@@ -404,6 +437,15 @@ void readTeams(char ** matrix, int sizeCol, int sizeLine, liste l)
     }
 }
 
+/**
+ * @brief Compte le nombre de joueur dans chaque équipe et le met dans une liste
+ * d'entiers
+ * 
+ * @param teamNames les noms de chaque équipe
+ * @param sizeCol taille de la colonne des noms de chaque équipe
+ * @param list la liste que l'ont veut analyser
+ * @return int* tableau en commun avec le nom des équipes du nombre de joueur
+ */
 int * teamsCount(char ** teamNames, int sizeCol, liste list)
 {
     int * teamCount = (int *)(malloc(sizeCol*sizeof(int)));
@@ -424,6 +466,15 @@ int * teamsCount(char ** teamNames, int sizeCol, liste list)
     return teamCount;
 }
 
+/**
+ * @brief Elimine une équipe si elle a moins de lessThanCoureurCount
+ * 
+ * @param teamNames les noms de chaque équipe
+ * @param sizeCol taille de la colonne des noms de chaque équipe
+ * @param list la liste que l'ont veut analyser
+ * @param coureursInTeams nombre de joueur par équipe
+ * @param lessThanCoureurCount int
+ */
 void removeTeam(char ** teamNames, int sizeCol, liste * list, int * coureursInTeams, int lessThanCoureurCount)
 {
     struct element * elementCourant = list->courant;
@@ -432,9 +483,9 @@ void removeTeam(char ** teamNames, int sizeCol, liste * list, int * coureursInTe
     {
         for(int i=0;i<sizeCol;i++)
         {
-            if((strcmp(teamNames[i],elementCourant->coureurActuel->equipe)) == 0 && (coureursInTeams[i]<=lessThanCoureurCount))
+            if((strcmp(teamNames[i],elementCourant->coureurActuel->equipe)) == 0 && (coureursInTeams[i]<lessThanCoureurCount))
             {
-                afficherCoureur(elementCourant->coureurActuel);
+                //afficherCoureur(elementCourant->coureurActuel);
                 effacerCoureur(list,elementCourant->coureurActuel,false);
                 elementCourant=getElementCourant(*list);
             }
@@ -443,11 +494,24 @@ void removeTeam(char ** teamNames, int sizeCol, liste * list, int * coureursInTe
     }
 }
 
+/**
+ * @brief Récupère l'élément courant de la liste
+ * 
+ * @param l liste
+ * @return struct element* 
+ */
 struct element * getElementCourant(liste l)
 {
     return l.courant;
 }
 
+/**
+ * @brief Affiche les équipes et le nombre de coureurs
+ * 
+ * @param teamsNames les noms de chaque équipe
+ * @param coureurInTeams nombre de coureur dans chaque équipe
+ * @param teamsNB nombre d'équipes
+ */
 void printTeamsDetails(char ** teamsNames, int * coureurInTeams, int teamsNB)
 {
     for(int i=0;i<teamsNB;i++)
@@ -456,30 +520,126 @@ void printTeamsDetails(char ** teamsNames, int * coureurInTeams, int teamsNB)
     }
 }
 
-void keepOnlyCoureur(int maxCoureur, liste * list, char ** teamNames, int sizeCol)
+/**
+ * @brief Affiche les équipes composés d'un certain nombre de coureur 
+ * 
+ * @param num le nombre de coureur auquel l'équipe doit être égale
+ * @param teamsNames les noms de chaque équipe
+ * @param coureurInTeams nombre de coureur dans chaque équipe
+ * @param teamsNB nombre d'équipes
+ */
+void printTeamsDetailsFor(int num, char ** teamsNames, int * coureurInTeams, int teamsNB)
 {
-    int k=0,j=0;
-    struct element * elementCourant = list->courant;
-    struct element * elementFin = list->fin;
-    while(elementCourant->suiv != elementFin->suiv)
+    for(int i=0;i<teamsNB;i++)
     {
-        if(strcmp(teamNames[k],elementCourant->coureurActuel->equipe) == 0)
+        if(coureurInTeams[i] == num)
         {
-            if(j>=maxCoureur)
-            {
-                effacerCoureur(list,elementCourant->coureurActuel,true);
-                elementCourant=getElementCourant(*list);
-            }
-            j++;
+            printf("Team [%d] : %s\n",i,teamsNames[i]);
         }
-        else{
-            k++;
-            j=1;
-        }
-        elementCourant=elementCourant->suiv;
     }
 }
 
+/**
+ * @brief Supprime les coureurs s'il y a plus de maxCoureur
+ * 
+ * @param maxCoureur nombre de coureur max dans une équipe
+ * @param list liste à analyser
+ * @param teamNames nom des équipes
+ * @param sizeCol taille de la colonne des équipe/nombre d'équipes
+ */
+int * keepOnlyCoureur(int maxCoureur, liste * list, char ** teamNames, int sizeCol)
+{
+    int * teamsCount = (int *)(malloc(sizeCol*sizeof(int)));
+    int * secondsPerTeam = (int *)(malloc(sizeCol*sizeof(int)));
+    memset(teamsCount, 0, sizeCol*sizeof(int));
+    memset(secondsPerTeam, 0, sizeCol*sizeof(int));
+    struct element * elementCourant = list->courant;
+    struct element * elementFin = list->fin;
+    for(int i=0;i<sizeCol;i++)
+    {
+        while(elementCourant->suiv != elementFin->suiv)
+        {
+            if(strcmp(teamNames[i],elementCourant->coureurActuel->equipe) == 0)
+            {
+                if(teamsCount[i]>=maxCoureur)
+                {
+                    effacerCoureur(list,elementCourant->coureurActuel,true);
+                    elementCourant=getElementCourant(*list);
+                }
+                else
+                {
+                    secondsPerTeam[i]+=elementCourant->coureurActuel->temps;
+                }
+                teamsCount[i]+=1;
+            }
+            elementCourant=elementCourant->suiv;
+        }
+        elementCourant=list->debut;
+    }
+    allerDebut(list);
+    return secondsPerTeam;
+}
+
+/**
+ * @brief Tri une liste de int ainsi qu'une liste de chaîne de caractère associé
+ * 
+ * @param temps liste de int
+ * @param taille taille de cette liste
+ * @param teams liste de chaîne de caractère (doit être de la même taille)
+ */
+void triTemps(int * temps, int taille,char ** teams)
+{
+    int tabTemp;
+    char * stringTemp = (char *)(malloc(MAXLINE*sizeof(char)));
+    bool tabOrdered = true;
+    for(int i=taille-1;i>1;i--)                                    
+    {
+        for(int j=0;j<=i-1;j++)                                    
+        {
+            if(temps[j+1] < temps[j])
+            {
+                tabTemp = temps[j+1];
+                stringTemp = teams[j+1];
+                temps[j+1] = temps[j];
+                teams[j+1] = teams[j];
+                temps[j] = tabTemp;    
+                teams[j] = stringTemp;
+                tabOrdered = false;
+            }
+        }
+        if(tabOrdered)
+        {
+            return;
+        }
+    }
+}
+
+/**
+ * @brief Affiche le temps ainsi que les équipes
+ * 
+ * @param temps liste de temps en int
+ * @param teams liste de chaîne de caractères, les équipes
+ * @param taille taille des deux listes (doivent être égales)
+ * @param ignore le chiffre qui doit être ignoré (si vous voulez le désactiver, choisissez un nombre impossible)
+ */
+void printTeamsTimes(int * temps, char ** teams, int taille, int ignore)
+{
+    for(int i=0;i<taille;i++)
+    {
+        if(temps[i] != ignore)
+        {
+            int heures,minutes,secondes;
+            formatSecond(temps[i],&heures,&minutes,&secondes);
+            printf("Temps : %d:%02d:%02d\t Equipe : %s\n",heures,minutes,secondes,teams[i]);
+        }
+    }
+}
+
+/**
+ * @brief Fonction de test
+ * 
+ * @return int renvoie zéro si réussie
+ */
 int test(void)
 {
     coureur * c1 = creerCoureur("Paris","Simon",15,"TRAUFORE",50000);

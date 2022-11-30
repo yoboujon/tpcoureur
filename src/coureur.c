@@ -43,19 +43,32 @@ void ajouterTemps(int leTemps,coureur * leCoureur)
 
 /**
  * @brief Afficher le temps d'un coureur stocker en seconde sous forme d'heures, de minutes et de secondes ( a partir de l'adresse de sa structure):
-    -initilisation de 3 variable tampon
-    -calcul d'heures qui renvoie uniquement la partie entier
-    -calcul de minutes qui renvoie uniquement la partie entier avec la prise en compte des heures soustraite en minutes
-    -calcul de seconde qui renvoie uniquement la partie entier avec la prise en compte des heures soustraite en secondes et des minutes en secondes
+    -initilisation de 3 variable temporaires
  
  * @param leCoureur Represente le coureur dont on souhaite affichée le temps 
  */
 void afficherCoureur(coureur * leCoureur)                   
 {                                                           
-    int heure,minute,seconde;                               
-    heure = (int)(leCoureur->temps)/3600;                   
-    minute = (int)((leCoureur->temps-heure*3600)/60);       
-    seconde = leCoureur->temps-(heure*3600+minute*60);      
+    int heure,minute,seconde;
+    formatSecond(leCoureur->temps, &heure, &minute, &seconde);   
      
     printf("Nom : %s\tPrenom : %s\tDossard : %d\tEquipe : %s\tTemps : %d:%d:%d\n",leCoureur->nom,leCoureur->prenom,leCoureur->dossard,leCoureur->equipe,heure,minute,seconde);
+}
+
+/**
+ * @brief Convertion des seconds à un format heures,minutes et secondes
+ * -calcul d'heures qui renvoie uniquement la partie entier
+ * -calcul de minutes qui renvoie uniquement la partie entier avec la prise en compte des heures soustraite en minutes
+ * -calcul de seconde qui renvoie uniquement la partie entier avec la prise en compte des heures soustraite en secondes et des minutes en secondes
+ * 
+ * @param secondsIN les secondes à rentrer
+ * @param hour les heures en sortie
+ * @param minute les minutes en sortie
+ * @param second les secondes en sortie
+ */
+void formatSecond(int secondsIN, int* hour, int* minute, int* second)
+{
+    *hour = (int)(secondsIN)/3600;                   
+    *minute = (int)((secondsIN-(*hour)*3600)/60);       
+    *second = secondsIN-((*hour)*3600+(*minute)*60);
 }
