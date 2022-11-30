@@ -1,5 +1,6 @@
 #include "../header/readfile.h"
 #include "../header/liste.h"
+#define MAXTEAMATES 3
 
 int main(void)
 {
@@ -33,8 +34,12 @@ int main(void)
     int * teamCount = teamsCount(tabTeam,teamsNb,l);
     printf("\n --- TEAMS AND TEAMS COUNT : --- \n");
     printTeamsDetails(tabTeam,teamCount,teamsNb);
+    printlist(l);
+    printf("\n --- TROIS COUREURS RESTANTS --- : \n");
+    keepOnlyCoureur(3,&l,tabTeam,teamsNb);
+    printlist(l);
     printf("\n --- COUREURS SUPPRIMEES --- : \n");
-    removeTeam(tabTeam,teamsNb,&l,teamCount,3);
+    removeTeam(tabTeam,teamsNb,&l,teamCount,MAXTEAMATES);
     printf("\n --- CLASSEMENT GENERAL : ---\n");
     triListe(&l,tailleListe(l));
     printlist(l);
@@ -171,7 +176,7 @@ coureur * coureurCourant(liste * l)
  * @param listeActuel Liste ou l'on suppr un element
  * @param coureurSuppr le coureur qui doit etre dans l'element pour le supprimer 
  */
-bool effacerCoureur(liste * listeActuel,coureur * coureurSuppr) 
+bool effacerCoureur(liste * listeActuel,coureur * coureurSuppr, bool returnSuiv) 
 {
     if(!doesCoureurExist(listeActuel,coureurSuppr))
     {
@@ -182,9 +187,9 @@ bool effacerCoureur(liste * listeActuel,coureur * coureurSuppr)
     if(eParcours->coureurActuel == coureurSuppr)         
     {
         listeActuel->courant=eParcours->suiv;            
-        listeActuel->debut=eParcours->suiv;              
+        listeActuel->debut=eParcours->suiv;            
     }
-    else{                                                
+    else{                                               
         ePrevious=eParcours;                             
         eParcours=eParcours->suiv;                       
         while(eParcours->coureurActuel != coureurSuppr){ 
@@ -192,7 +197,11 @@ bool effacerCoureur(liste * listeActuel,coureur * coureurSuppr)
             eParcours=eParcours->suiv;                   
         }
         ePrevious->suiv=eParcours->suiv;                 
-        free(eParcours);                                
+        free(eParcours);
+        if(returnSuiv)
+        {
+            listeActuel->courant=ePrevious;
+        }                         
     }
     return true;
 }
@@ -217,7 +226,7 @@ int effacerListe(liste * destination, liste * source)
     struct element * eCourant = source->debut;                                                  
     while(eCourant->suiv != source->fin->suiv)
     {
-        if(effacerCoureur(destination,eCourant->coureurActuel))
+        if(effacerCoureur(destination,eCourant->coureurActuel,false))
         {
             returnValue++; 
         }                            
@@ -426,7 +435,7 @@ void removeTeam(char ** teamNames, int sizeCol, liste * list, int * coureursInTe
             if((strcmp(teamNames[i],elementCourant->coureurActuel->equipe)) == 0 && (coureursInTeams[i]<=lessThanCoureurCount))
             {
                 afficherCoureur(elementCourant->coureurActuel);
-                effacerCoureur(list,elementCourant->coureurActuel);
+                effacerCoureur(list,elementCourant->coureurActuel,false);
                 elementCourant=getElementCourant(*list);
             }
         }
@@ -444,6 +453,30 @@ void printTeamsDetails(char ** teamsNames, int * coureurInTeams, int teamsNB)
     for(int i=0;i<teamsNB;i++)
     {
         printf("Team [%d] : %s\tCoureurs : %d\n",i,teamsNames[i],coureurInTeams[i]);
+    }
+}
+
+void keepOnlyCoureur(int maxCoureur, liste * list, char ** teamNames, int sizeCol)
+{
+    int k=0,j=0;
+    struct element * elementCourant = list->courant;
+    struct element * elementFin = list->fin;
+    while(elementCourant->suiv != elementFin->suiv)
+    {
+        if(strcmp(teamNames[k],elementCourant->coureurActuel->equipe) == 0)
+        {
+            if(j>=maxCoureur)
+            {
+                effacerCoureur(list,elementCourant->coureurActuel,true);
+                elementCourant=getElementCourant(*list);
+            }
+            j++;
+        }
+        else{
+            k++;
+            j=1;
+        }
+        elementCourant=elementCourant->suiv;
     }
 }
 
@@ -469,7 +502,7 @@ int test(void)
     ajoutListe(&l1,c6);                                                             
     printf(" -- AJOUT LISTE, taille =%d -- \n",tailleListe(l1));
     printlist(l1);
-    effacerCoureur(&l1,c2);
+    effacerCoureur(&l1,c2,false);
     printf(" -- SUPR LISTE, taille =%d -- \n",tailleListe(l1));
     printlist(l1);
     printf(" -- INTERVERTI COUREUR 1 ET 2 DE LA LISTE -- \n");
@@ -484,9 +517,9 @@ int test(void)
     triListe(&l1,tailleListe(l1));
     printlist(l1);
     printf(" -- SUPPRIME UN COUREUR N'EXISTANT PAS -- \n");
-    effacerCoureur(&l1,c7);
-    effacerCoureur(&l1,c3);
-    effacerCoureur(&l1,c4);
+    effacerCoureur(&l1,c7,false);
+    effacerCoureur(&l1,c3,false);
+    effacerCoureur(&l1,c4,false);
     printf("Does c3 exists : %d\tand c4 ? : %d\n",doesCoureurExist(&l1,c3),doesCoureurExist(&l1,c4));
     printlist(l1);
     return 0;

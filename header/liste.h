@@ -26,7 +26,7 @@ void allerDebut(liste * l);                                     //mettre le poit
 void allerFin(liste * l);                                       //mettre le poiteur courant sur l'element de fin d'une liste 
 void avancer(liste * l);                                        //mettre le poiteur courant sur l'element suivant de la liste dans la qu'elle qu'il pointe
 coureur * coureurCourant(liste * l);                            //rien a foutre ici
-bool effacerCoureur(liste * listeActuel,coureur * coureurSuppr);//enleve un element d'une liste a partir de l'adresse d'un courreur, sans briser le chainage
+bool effacerCoureur(liste * listeActuel,coureur * coureurSuppr, bool returnSuiv);//enleve un element d'une liste a partir de l'adresse d'un courreur, sans briser le chainage
 bool doesCoureurExist(liste* l,coureur * c);
 int effacerListe(liste * destination, liste * source);
 int tailleListe(liste l);                                       //retourne le nombre d'elements chaine d'une liste
