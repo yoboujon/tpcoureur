@@ -1,6 +1,80 @@
+/**
+ * @file liste.c
+ * @author Yohan Boujon (boujon@insa-toulouse.fr)
+ * @author Simon Paris (pari@insa-toulouse.fr)
+ * @brief Gère les listes
+ * @version 1.0
+ * @date 2022-12-01
+ * 
+ * @copyright Copyright (c) 2022
+ * 
+ */
 #include "../header/readfile.h"
 #include "../header/liste.h"
 #define MAXTEAMATES 3
+
+/*! \mainpage TP Coureur par Simon Paris et Yohan Boujon
+# TP Langage C
+## Introduction
+Le programme tpcoureur fonctionne de manière aléatoire.
+
+A chaque lancement du programme les coureurs sont lu à partir du fichier
+[fichier_coureur.txt](fichier_coureurs.txt). Ces derniers vont être ensuite mis dans une liste, dans le même ordre que donné par le fichier. Ce fichier possède une convention particulière, soit :
+> `1` Nombre d'étapes
+
+> `1` Nombre d'équipe
+
+> `x` Nom de l'équipe *x*
+
+>   `5x` n° du dossard, Nom, `d'un coureur de l'équipe x`
+
+>    ...
+
+Les variables définies 
+> `TEMPSMAX` Temps maximum qu'un coureur peut avoir\
+`TEMPSMIN` Temps minimum qu'un coureur peut avoir\
+`TEMPSDOP` Temps pour les joueurs dopés *(Inférieur à `TEMPSMIN`)*\
+
+Chaque calcul de temps est randomisé selon ces variables. Elles peuvent être changées pour avoir des temps finaux différents. Mais surtout change la chance qu'un joueur soit dopé.
+
+Le programme va tout d'abord supprimer les coureurs dopés et trier avec l'algorithme du [tri bulle][bullewiki] dans l'ordre croissant. Il va ensuite afficher les équipes éliminées : une équipe est éliminée si elle possède moins de `3 joueurs`. Et enfin elle affiche le classement final des **équipes uniquement**, seuls les temps des 3 meilleurs coureurs sont comptés.
+
+En premier lieu les différents participants sont affichés :
+
+![coureurs](img/coureurs.png)
+
+Différents classements sont affichés. Tout d'abord le general :
+
+![general](img/general.png)
+
+Ensuite les différentes personnes dopées ainsi que les équipe éliminées :
+
+![general](img/elimine.png)
+
+Et enfin le classement final :
+
+![final](img/final.png)
+
+## Installation
+
+Le [Makefile](/Makefile) permet de compiler et lancer le programme. Il permet aussi de nettoyer les résidus de la compilation. Pour cela il est possible de faire différentes commandes :
+```
+make
+```
+*Compile et lance le programme*
+```
+make clean
+```
+*Supprime les fichiers d'output ainsi que l'executable*
+```
+./main
+```
+*Lance le programme s'il est déjà compilé*
+
+A noter que sur windows Le Makefile produit une erreur 127. Cela n'est produit qu'en compilation et non à l'execution.
+
+[bullewiki]: https://fr.wikipedia.org/wiki/Tri_%C3%A0_bulles
+ */
 
 int main(void)
 {
@@ -49,11 +123,6 @@ int main(void)
     return 0;
 }
 
-/**
- * @brief initialise un element en memoire qui encapsule une strucure de coureur au champs vide
- * 
- * @return returnElement retourne un element vierge  
- */
 struct element * initElement(void)
 {
     struct element * returnElement = (struct element *)malloc(sizeof(struct element));
@@ -62,12 +131,6 @@ struct element * initElement(void)
     return returnElement;
 }
 
-/**
- * @brief initialise chaque element de la liste a partir de initElement
- * 
- *  
- * @return l 
- */
 liste initListe(void)
 {
     liste l;
@@ -77,17 +140,6 @@ liste initListe(void)
     return l;
 }
 
-/**
- * @brief ajout d'un element contenant un coureur dans liste 
- * fonctionnement :
-    -Creation element vierge 
-    -l'element vierge recoi le coureur passer en parametre
-    -l'element vierge poite sur le premier element 
-    -le poiteur de premiere element contenue dans liste pointe sur le nouvelle element(vierge)
-    -le poiteur courant contenue dans la liste pointe sur le nouvelle element
- * @param listeActuel liste ou l'on rajoute un element
- * @param leCoureur   le coureur qui sera contenue dans l'element rajoutee
- */
 void ajoutListe(liste * listeActuel,coureur * leCoureur)                                 
 {
     struct element * elementActuel = (struct element *)malloc(sizeof(struct element));    
@@ -97,16 +149,6 @@ void ajoutListe(liste * listeActuel,coureur * leCoureur)
     listeActuel->courant=elementActuel;                                                   
 }
 
-/**
- * @brief affiche tous les coureurs contenue dans les elements d'une liste
- * fonctionnement :
-    -decleration d'un poiteur eCourant egale l'adresse du premiere element (variable temporaire)
-    -Tant que eCourant->suiv n'est pas egale a l'adresse du derniere element faire :
-    -affichee le coureur dans l'element d'adresse eCourant
-    -eCourant devient l'adresse de l'element suivant
-    
- * @param l liste a affiche
- */
 void printlist(liste l)                                                                   
 {
     struct element * eCourant = l.debut;                                                  
@@ -118,66 +160,26 @@ void printlist(liste l)
     printf("NULL \n");                                                                   
 }
 
-/**
- * @brief Mettre le poiteur courant d'une liste sur le premiere element
- * 
- * @param l liste ou l'on modifie le poiteur courant
- */
 void allerDebut(liste * l) 
 {
     l->courant = l->debut;
 }
 
-/**
- * @brief Mettre le poiteur courant d'une liste sur le derniee element
- * 
- * @param l liste ou l'on modifie le poiteur courant
- */
 void allerFin(liste * l)
 {
     l->courant = l->fin;
 }
 
-/**
- * @brief Mettre le poiteur courant sur l'element suivant
- * 
- * @param l liste ou l'on modifie le poiteur courant
- */
 void avancer(liste * l)
 {
     l->courant = l->courant->suiv;
 }
 
-/**
- * @brief Retourne le coureur encapsulee dans l'element pointer par le pointeur courant
- * 
- * @param l liste ou l'on modifie le poiteur courant
- */
 coureur * coureurCourant(liste * l)
 {
     return l->courant->coureurActuel;
 }
 
-/**
- * @brief suprime un element(a partir de l'adresse d'un coureur) dans la liste sans briser le chainage
- * fonctionnement :
-    -declaration d'un poiteur eParcours egale l'adresse du premiere element (variable temporaire)
-    -declaration d'un poiteur(ePrevious) qui stockera temporairement l'adresse des elements pendant la reconstruction du chainage
-    -si l'element a supprimer est le premiere element de la liste :
-    -le poiteur courant pointe sur l'element suivant
-    -le poiteur pointant sur le premiere element poite sur le deuxieme
-    -si l'element a suppr n'est pas le deuxieme :
-    -ePrevious egale l'adresse du premiere element 
-    -eParcours egale l'adresse du deuxieme element 
-    -tant que l'element poitee par eParcours ne contient pas le courreur a supprimer faire :
-    -ePrevious pointe sur l'element suivant
-    -eParcours pointe sur l'element suivant 
-    -l'element avant celui a suprimer pointe sur l'element sur le qu'elle poite l'element a supprimer 
-    -supression de l'element
-
- * @param listeActuel Liste ou l'on suppr un element
- * @param coureurSuppr le coureur qui doit etre dans l'element pour le supprimer 
- */
 bool effacerCoureur(liste * listeActuel,coureur * coureurSuppr, bool returnSuiv) 
 {
     if(!doesCoureurExist(listeActuel,coureurSuppr))
@@ -208,13 +210,6 @@ bool effacerCoureur(liste * listeActuel,coureur * coureurSuppr, bool returnSuiv)
     return true;
 }
 
-/**
- * @brief Cherche si un coureur existe dans une liste
- * 
- * @param l la liste en question
- * @param c le coureur cherché 
- * @return true / false
- */
 bool doesCoureurExist(liste* l,coureur * c)
 {
     struct element * eDebut = l->debut;                                                  
@@ -229,13 +224,6 @@ bool doesCoureurExist(liste* l,coureur * c)
     return false; 
 }
 
-/**
- * @brief A partir d'une liste source supprime tous les éléments en commun
- * 
- * @param destination liste à modifier
- * @param source liste des éléments à supprimer
- * @return int nombre d'éléments supprimés
- */
 int effacerListe(liste * destination, liste * source)
 {
     int returnValue=0;
@@ -251,20 +239,6 @@ int effacerListe(liste * destination, liste * source)
     return returnValue;
 }
 
-/**
- * @brief Renvoie le nombre d'elements d'une liste
- fonctionnement :
- -initilisation a 0 d'un compteur (int)
- -decleration d'un poiteur elementActuel initialisee au poiteur debut present dans liste qui pointe sur le premier element du chainage
- -tant que elementActuel n'est pas egale a l'adresse du derniere element faire 
- -increment compteur
- -elementActuel pointe sur l'element suivant
- -retourne le compteur
-
- * 
- * @param l l la liste dont on ve connaitre la taille 
- * @return int le nombre d'element (on compte a partir de 0)
- */
 int tailleListe(liste l)                            
 {
     int returnValue=0;                              
@@ -278,17 +252,6 @@ int tailleListe(liste l)
     allerDebut(&l);                  
 }
 
-/**
- * @brief retourne le courreur contenue dans l'element nb d'une liste (on considere un element 0)
- * fonctionnement :
-    -init elementCourant a l'adresse du premiere element de la liste
-    -pour i allant de 0 a nb-1
-    -a la fin de la boucle elementcourant pointe sur l'element nb (on considere un element 0)
-    -renvoie le coureur encapsulee dans l'element nb
- * @param l la liste ou doit se trouver l'element encapsulant le coureur 
- * @param nb le numero d'element rechercher 
- * @return coureur* 
- */
 coureur * getCoureur(liste l,int nb)                
 {
     struct element * elementCourant = l.debut;     
@@ -299,26 +262,6 @@ coureur * getCoureur(liste l,int nb)
     return elementCourant->coureurActuel;       
 }
 
-/**
- * @brief inverse l'element nb et nb+1 dans une liste (on considere un element 0)
- * fonctionnement :
-    -decleration d'un poiteur elementCourant initialisee au poiteur debut present dans liste qui pointe sur le premier element du chainage
-    -declaration et allocation  en memoire(a l'adresse *elemeentPrecedent) d'une taille de structure element de type element 
-    -pour i allant de 0 a nb-1 faire :
-    -en fin de boucle elementCourant poite sur l'element nb et elementPrecendent nb-1
-    
-    -declaration de elementsuivant qui poite sur l'element nb+1
-    -elementCourant pointe sur nb+1
-    -elementSuivant pointe sur nb
-    -si l'element a intervertir est le premier :
-    -le poiteur courant pointe sur l'ancien deuxieme element
-    -le poiteur debut pointe sur l'ancien deuxieme
-    -si l'element a intervertir diff du premier :
-    -element nb-1 pointe sur element nb
-    -le poiteur courant pointe sur le premier element
- * @param l liste ou l'on inverse les elements
- * @param nb le numero d'element inverser avec nb+1
- */
 void invertCoureur(liste * l,int nb)
 {
     struct element * elementDebut = l->debut;                                            
@@ -342,17 +285,6 @@ void invertCoureur(liste * l,int nb)
     }
 }
 
-/**
- * @brief trie bulle des element d'une liste a partir du temps contenue dans la structure encapsule dans l'element
- * fonctionnement :
-    -pour i allant du nombre d'element dans la liste a 2 step -1
-    -pour j allant de 0 a i-1 step 1
-    -si leCourreur taille -i a un temps < au coureur taille-i+1
-    -inverser les courreurs j et j+1
-
- * @param l liste a trier
- * @param taille represente la taille de la liste 
- */
 void triListe(liste * l,int taille)
 {
     bool tabOrdered = true;
@@ -365,7 +297,7 @@ void triListe(liste * l,int taille)
                 invertCoureur(l,j);                                
                 tabOrdered = false;
             }
-            //printlist(*l);
+            
         }
         if(tabOrdered)
         {
@@ -374,13 +306,6 @@ void triListe(liste * l,int taille)
     }
 }
 
-/**
- * @brief Initialise un tableau de chaîne de caractères
- * 
- * @param sizeCol taille des colonnes
- * @param sizeLine taille de chaque ligne
- * @return int** Une matrice de caractère
- */
 char ** initMatrix(int sizeCol,int sizeLine)
 {
     char ** matrix;
@@ -392,15 +317,6 @@ char ** initMatrix(int sizeCol,int sizeLine)
     return matrix;
 }
 
-/**
- * @brief Detecte si une chaîne de caractères est présente dans un
- * tabealu de chaîne de caractères
- * 
- * @param matrix tableau de chaîne de caractères
- * @param string chaîne de caractère
- * @param size nombre de lignes
- * @return true / false
- */
 bool isStringInMatrix(char ** matrix, char * string, int size)
 {
     for(int i=0;i<size;i++)
@@ -413,14 +329,6 @@ bool isStringInMatrix(char ** matrix, char * string, int size)
     return false;
 }
 
-/**
- * @brief Donne le nom de chaque équipe dans un tableau de chaîne de caractères
- * 
- * @param matrix tableau de chaîne de caractère
- * @param sizeCol taille des colonns
- * @param sizeLine taille des lignes
- * @param l la liste composant les noms des équipes
- */
 void readTeams(char ** matrix, int sizeCol, int sizeLine, liste l)
 {
     int i=0;
@@ -437,15 +345,6 @@ void readTeams(char ** matrix, int sizeCol, int sizeLine, liste l)
     }
 }
 
-/**
- * @brief Compte le nombre de joueur dans chaque équipe et le met dans une liste
- * d'entiers
- * 
- * @param teamNames les noms de chaque équipe
- * @param sizeCol taille de la colonne des noms de chaque équipe
- * @param list la liste que l'ont veut analyser
- * @return int* tableau en commun avec le nom des équipes du nombre de joueur
- */
 int * teamsCount(char ** teamNames, int sizeCol, liste list)
 {
     int * teamCount = (int *)(malloc(sizeCol*sizeof(int)));
@@ -466,15 +365,6 @@ int * teamsCount(char ** teamNames, int sizeCol, liste list)
     return teamCount;
 }
 
-/**
- * @brief Elimine une équipe si elle a moins de lessThanCoureurCount
- * 
- * @param teamNames les noms de chaque équipe
- * @param sizeCol taille de la colonne des noms de chaque équipe
- * @param list la liste que l'ont veut analyser
- * @param coureursInTeams nombre de joueur par équipe
- * @param lessThanCoureurCount int
- */
 void removeTeam(char ** teamNames, int sizeCol, liste * list, int * coureursInTeams, int lessThanCoureurCount)
 {
     struct element * elementCourant = list->courant;
@@ -485,7 +375,7 @@ void removeTeam(char ** teamNames, int sizeCol, liste * list, int * coureursInTe
         {
             if((strcmp(teamNames[i],elementCourant->coureurActuel->equipe)) == 0 && (coureursInTeams[i]<lessThanCoureurCount))
             {
-                //afficherCoureur(elementCourant->coureurActuel);
+                
                 effacerCoureur(list,elementCourant->coureurActuel,false);
                 elementCourant=getElementCourant(*list);
             }
@@ -494,24 +384,11 @@ void removeTeam(char ** teamNames, int sizeCol, liste * list, int * coureursInTe
     }
 }
 
-/**
- * @brief Récupère l'élément courant de la liste
- * 
- * @param l liste
- * @return struct element* 
- */
 struct element * getElementCourant(liste l)
 {
     return l.courant;
 }
 
-/**
- * @brief Affiche les équipes et le nombre de coureurs
- * 
- * @param teamsNames les noms de chaque équipe
- * @param coureurInTeams nombre de coureur dans chaque équipe
- * @param teamsNB nombre d'équipes
- */
 void printTeamsDetails(char ** teamsNames, int * coureurInTeams, int teamsNB)
 {
     for(int i=0;i<teamsNB;i++)
@@ -520,14 +397,6 @@ void printTeamsDetails(char ** teamsNames, int * coureurInTeams, int teamsNB)
     }
 }
 
-/**
- * @brief Affiche les équipes composés d'un certain nombre de coureur 
- * 
- * @param num le nombre de coureur auquel l'équipe doit être égale
- * @param teamsNames les noms de chaque équipe
- * @param coureurInTeams nombre de coureur dans chaque équipe
- * @param teamsNB nombre d'équipes
- */
 void printTeamsDetailsFor(int num, char ** teamsNames, int * coureurInTeams, int teamsNB)
 {
     for(int i=0;i<teamsNB;i++)
@@ -539,14 +408,6 @@ void printTeamsDetailsFor(int num, char ** teamsNames, int * coureurInTeams, int
     }
 }
 
-/**
- * @brief Supprime les coureurs s'il y a plus de maxCoureur
- * 
- * @param maxCoureur nombre de coureur max dans une équipe
- * @param list liste à analyser
- * @param teamNames nom des équipes
- * @param sizeCol taille de la colonne des équipe/nombre d'équipes
- */
 int * keepOnlyCoureur(int maxCoureur, liste * list, char ** teamNames, int sizeCol)
 {
     int * teamsCount = (int *)(malloc(sizeCol*sizeof(int)));
@@ -580,13 +441,6 @@ int * keepOnlyCoureur(int maxCoureur, liste * list, char ** teamNames, int sizeC
     return secondsPerTeam;
 }
 
-/**
- * @brief Tri une liste de int ainsi qu'une liste de chaîne de caractère associé
- * 
- * @param temps liste de int
- * @param taille taille de cette liste
- * @param teams liste de chaîne de caractère (doit être de la même taille)
- */
 void triTemps(int * temps, int taille,char ** teams)
 {
     int tabTemp;
@@ -614,14 +468,6 @@ void triTemps(int * temps, int taille,char ** teams)
     }
 }
 
-/**
- * @brief Affiche le temps ainsi que les équipes
- * 
- * @param temps liste de temps en int
- * @param teams liste de chaîne de caractères, les équipes
- * @param taille taille des deux listes (doivent être égales)
- * @param ignore le chiffre qui doit être ignoré (si vous voulez le désactiver, choisissez un nombre impossible)
- */
 void printTeamsTimes(int * temps, char ** teams, int taille, int ignore)
 {
     for(int i=0;i<taille;i++)
@@ -635,11 +481,6 @@ void printTeamsTimes(int * temps, char ** teams, int taille, int ignore)
     }
 }
 
-/**
- * @brief Fonction de test
- * 
- * @return int renvoie zéro si réussie
- */
 int test(void)
 {
     coureur * c1 = creerCoureur("Paris","Simon",15,"TRAUFORE",50000);
